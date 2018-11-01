@@ -92,7 +92,7 @@ public class ExchangeRatesDisplay implements CommandLineRunner {
             System.out.println("Calculation performed with custom algorithm");
         }
         System.out.println(arithmeticMean + " : Purchase average");
-        System.out.println(standardDeviation + " : StandardDeviation");
+        System.out.println(standardDeviation + " : Standard deviation");
 
 
     }
