@@ -16,26 +16,26 @@ public class NBPResponse {
       private String code;
       private ArrayList<Rate> rates;
 
-      public double[] extractBidArray() {
+      public double[] extractBids() {
 
-            double[] bidArray = new double[daysNumberCount()];
+            double[] bids = new double[daysNumberCount()];
             int i = 0;
             for(Rate rate: rates) {
-                  bidArray[i] = rate.getBid();
+                  bids[i] = rate.getBid();
                   i ++;
             }
-            return bidArray;
+            return bids;
       }
 
-      public double[] extractAskArray() {
+      public double[] extractAsks() {
 
-          double[] askArray = new double[daysNumberCount()];
+          double[] asks = new double[daysNumberCount()];
           int i = 0;
           for(Rate rate: rates) {
-              askArray[i] = rate.getAsk();
+              asks[i] = rate.getAsk();
               i++;
           }
-          return askArray;
+          return asks;
       }
 
       public int daysNumberCount() {

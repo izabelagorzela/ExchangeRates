@@ -1,6 +1,6 @@
-#logging:
-#  pattern:
-#    console:
+logging:
+  pattern:
+    console:
 
 spring:
   main:

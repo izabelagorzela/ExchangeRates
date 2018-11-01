@@ -2,63 +2,48 @@ package org.gorzela.exchange;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class Statistics {
 
-    private double[] bidArray;
-    private double[] askArray;
+    private double[] prices;
 
-    public double myStandardArithmeticMean(double arrayValue[]) {
 
-        double bidSum = 0;
-        for(double bid: arrayValue) {
-            bidSum = bidSum + bid;
+    public double myStandardArithmeticMean() {
+
+        double pricesSum = 0;
+        for(double price: prices) {
+
+            pricesSum = pricesSum + price;
         }
-        double result = bidSum / arrayValue.length ;
-        return result;
-    }
-
-    public double apacheStandardArithmeticMean(double arrayValue[]) {
-
-        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(arrayValue);
-        return descriptiveStatistics.getMean();
+        return pricesSum / prices.length;
     }
 
     public double varianceCount() {
 
         double numerator = 0;
-        for(double ask: askArray) {
+        for(double price: prices ) {
 
-            numerator = numerator + (pow(ask - myStandardArithmeticMean(askArray),2));
+            numerator = numerator + (pow(price - myStandardArithmeticMean(),2));
         }
 
-        return numerator / (askArray.length - 1);
+        return numerator / (prices.length - 1);
     }
 
     public double myStandardStandardDeviation() {
 
-       if (askArray.length == 1) {
+       if (prices.length == 1) {
            return 0;
         }
        else {
 
            return sqrt(varianceCount());
        }
-    }
-
-    public double apacheStandardStandardDeviation() {
-
-        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(askArray);
-        return descriptiveStatistics.getStandardDeviation();
     }
 }
 

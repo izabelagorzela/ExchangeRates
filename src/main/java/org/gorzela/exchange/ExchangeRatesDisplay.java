@@ -1,78 +1,99 @@
 package org.gorzela.exchange;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 
 @Slf4j
 @Component
 public class ExchangeRatesDisplay implements CommandLineRunner {
 
+    private static final int CURRENCY_CODE = 0;
+    private static final int DATE_FROM = 1;
+    private static final int DATE_TO = 2;
+    private static final int MINIMUM_ARGUMENTS_NUMBER = 3;
+    private static final int CALCULATION_VARIANT = 3;
+    private static final String MY_CALCULATION_VARIANT = "-m";
+    private static final boolean MY_ALGORITHM = false;
+    private static final boolean APATCHE_ALGORITHM = true;
 
     @Autowired
-    private UriFactory uriFactory;
+    private NbpApiReader nbpApiReader;
+
+    private boolean algorithmVersion = APATCHE_ALGORITHM;
 
     @Override
     public void run(String[] args) throws Exception {
 
-        boolean algorithmVersion = true;
+        double arithmeticMean;
+        double standardDeviation;
+        double[] bids;
+        double[] asks;
 
         log.info("Application is running...");
 
+        if(args.length < MINIMUM_ARGUMENTS_NUMBER) {
+            System.out.println("No enought arguments");
+        }
 
-        NBPResponse chargeData = getData(args[0], args[1], args[2]);
+        NBPResponse chargeData = nbpApiReader.getData(args[CURRENCY_CODE], args[DATE_FROM], args[DATE_TO]);
         if(chargeData != null) {
 
-            if(args.length > 3 && args[3].equals("-m")) {
-                algorithmVersion = false;
+            if(args.length > MINIMUM_ARGUMENTS_NUMBER && args[CALCULATION_VARIANT].equals(MY_CALCULATION_VARIANT)) {
+                algorithmVersion = MY_ALGORITHM;
             }
-            showResult(chargeData, algorithmVersion);
+
+            bids = chargeData.extractBids();
+            asks = chargeData.extractAsks();
+
+            arithmeticMean = calculateMean(bids, algorithmVersion);
+            standardDeviation = calculateStandardDeviation(asks, algorithmVersion);
+
+            showResult(arithmeticMean, standardDeviation);
         }
     }
 
-    private NBPResponse getData(String pathPart1, String pathPart2, String pathPart3) throws URISyntaxException {
+    private double calculateMean(double[] bids , boolean algorithmVersion) {
 
-        URI uri = uriFactory.getUri(pathPart1, pathPart2, pathPart3);
-        ResponseEntity<NBPResponse> entity;
-        RestTemplate restTemplate = new RestTemplate();
+        Statistics statistics = new Statistics(bids);
 
+        if(algorithmVersion == MY_ALGORITHM) {
 
-        try {
-            entity = restTemplate.getForEntity(uri, NBPResponse.class);
-
-        }catch (Exception ex) {
-            System.out.println("Something wrong happened...");
-            System.out.println(ex.getMessage());
-            return null;
+            return statistics.myStandardArithmeticMean();
         }
-
-        if(entity.getStatusCode() != HttpStatus.OK) {
-            return null;
+        else {
+            DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(bids);
+            return descriptiveStatistics.getMean();
         }
-        System.out.println(entity.getBody());
-        return entity.getBody();
     }
 
-    private void showResult(NBPResponse chargeData, boolean algorithmVersion) {
+    private double calculateStandardDeviation(double[] asks, boolean algorithmVersion) {
 
-        Statistics statistics = new Statistics(chargeData.extractBidArray(), chargeData.extractAskArray());
+        Statistics statistics = new Statistics(asks);
+        if(algorithmVersion == MY_ALGORITHM) {
 
-        if(algorithmVersion == true) {
-            System.out.println("Apache standard");
-            System.out.println("Purchase average " + statistics.apacheStandardArithmeticMean(statistics.getBidArray()));
-            System.out.println("StandardDeviation " + statistics.apacheStandardStandardDeviation());
+            return statistics.myStandardStandardDeviation();
         }
-        if(algorithmVersion == false){
-            System.out.println("My standard");
-            System.out.println("Purchase average " + statistics.myStandardArithmeticMean(statistics.getBidArray()));
-            System.out.println("StandardDeviation " + statistics.myStandardStandardDeviation());
+        else {
+            DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(asks);
+            return descriptiveStatistics.getStandardDeviation();
         }
+    }
+
+    private void showResult(double arithmeticMean, double standardDeviation) {
+
+        if(algorithmVersion == APATCHE_ALGORITHM) {
+            System.out.println("Calculation performed with Apache library");
+        }
+        if(algorithmVersion == MY_ALGORITHM){
+            System.out.println("Calculation performed with custom algorithm");
+        }
+        System.out.println(arithmeticMean + " : Purchase average");
+        System.out.println(standardDeviation + " : StandardDeviation");
+
+
     }
 }
