@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import java.net.URI;
-import java.net.URISyntaxException;
+
 
 @Component
 public class NbpApiReader {
@@ -14,7 +14,7 @@ public class NbpApiReader {
     @Autowired
     public UriFactory uriFactory;
 
-    public NBPResponse getData(String pathPart1, String pathPart2, String pathPart3) throws URISyntaxException {
+    public NBPResponse getData(String pathPart1, String pathPart2, String pathPart3) {
 
         URI uri = uriFactory.getUri(pathPart1, pathPart2, pathPart3);
         ResponseEntity<NBPResponse> entity;

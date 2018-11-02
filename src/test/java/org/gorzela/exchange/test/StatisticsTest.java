@@ -8,9 +8,27 @@ import static org.junit.Assert.assertEquals;
 public class StatisticsTest {
 
     @Test
-    public void arithmeticMeanOneValuesTest() {
+    public void arithmeticMeanSmallValuesTest() {
+
+        double[] bids = {0.0073, 0.0023};
+        Statistics statistics = new Statistics(bids);
+        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(bids);
+        assertEquals(descriptiveStatistics.getMean(), statistics.myStandardArithmeticMean(), 0.0000001);
+    }
+
+    @Test
+    public void arithmeticMeanOneValueTest() {
 
         double[] bids = {3.7273};
+        Statistics statistics = new Statistics(bids);
+        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(bids);
+        assertEquals(descriptiveStatistics.getMean(), statistics.myStandardArithmeticMean(), 0);
+    }
+
+    @Test
+    public void arithmeticMeanTwoValuesTest() {
+
+        double[] bids = {3.7273, 3.7626};
         Statistics statistics = new Statistics(bids);
         DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(bids);
         assertEquals(descriptiveStatistics.getMean(), statistics.myStandardArithmeticMean(), 0);
@@ -35,13 +53,32 @@ public class StatisticsTest {
     }
 
     @Test
-    public void StandardDeviationOneValuesTest() {
+    public void StandardDeviationSmallValuesTest() {
+
+        double[] asks = {0.0073, 0.0023};
+        Statistics statistics = new Statistics(asks);
+        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(asks);
+        assertEquals(descriptiveStatistics.getStandardDeviation(), statistics.myStandardStandardDeviation(), 0.0000001);
+    }
+
+    @Test
+    public void StandardDeviationOneValueTest() {
 
         double[] asks = {3.7273};
         Statistics statistics = new Statistics(asks);
         DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(asks);
         assertEquals(descriptiveStatistics.getStandardDeviation(), statistics.myStandardStandardDeviation(), 0);
     }
+
+    @Test
+    public void StandardDeviationTwoValuesTest() {
+
+        double[] asks = {3.7273, 3.7626};
+        Statistics statistics = new Statistics(asks);
+        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(asks);
+        assertEquals(descriptiveStatistics.getStandardDeviation(), statistics.myStandardStandardDeviation(), 0);
+    }
+
     @Test
     public void StandardDeviationFiveValuesTest() {
 

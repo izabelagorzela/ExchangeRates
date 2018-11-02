@@ -30,7 +30,7 @@ public class ExchangeRatesDisplay implements CommandLineRunner {
     private boolean algorithmVersion = APACHE_ALGORITHM;
 
     @Override
-    public void run(String[] args) throws Exception {
+    public void run(String[] args){
 
         double arithmeticMean;
         double standardDeviation;
