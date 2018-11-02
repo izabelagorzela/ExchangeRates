@@ -1,4 +1,4 @@
-package org.gorzela.exchange;
+package org.gorzela.exchange.statistics;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

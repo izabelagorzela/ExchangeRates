@@ -1,7 +1,7 @@
 package org.gorzela.exchange.test;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.gorzela.exchange.Statistics;
+import org.gorzela.exchange.statistics.Statistics;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 

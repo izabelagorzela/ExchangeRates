@@ -2,6 +2,9 @@ package org.gorzela.exchange;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.gorzela.exchange.nbpapi.NBPResponse;
+import org.gorzela.exchange.nbpapi.NbpApiReader;
+import org.gorzela.exchange.statistics.Statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

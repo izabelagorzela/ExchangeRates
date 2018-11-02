@@ -1,4 +1,4 @@
-package org.gorzela.exchange;
+package org.gorzela.exchange.nbpapi;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

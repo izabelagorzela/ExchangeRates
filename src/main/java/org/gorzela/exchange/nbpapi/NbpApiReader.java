@@ -1,4 +1,4 @@
-package org.gorzela.exchange;
+package org.gorzela.exchange.nbpapi;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

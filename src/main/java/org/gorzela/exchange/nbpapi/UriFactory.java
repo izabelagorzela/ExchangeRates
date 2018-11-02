@@ -1,4 +1,4 @@
-package org.gorzela.exchange;
+package org.gorzela.exchange.nbpapi;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponents;
