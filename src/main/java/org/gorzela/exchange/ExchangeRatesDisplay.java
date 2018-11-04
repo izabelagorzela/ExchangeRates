@@ -15,12 +15,13 @@ import org.springframework.stereotype.Component;
 public class ExchangeRatesDisplay implements CommandLineRunner {
 
     private static final int ARG_MINIMUM_ARGUMENTS_NUMBER = 3;
-    private static final int ARG_CURRENCY_CODE = 0;
+    private static final int ARG_CURRENCY_CODE_OR_HELP = 0;
     private static final int ARG_DATE_FROM = 1;
     private static final int ARG_DATE_TO = 2;
     private static final int ARG_CALCULATION_VARIANT = 3;
 
     private static final String MY_CALCULATION_VARIANT = "-m";
+    private static final String HELP = "-h";
     private static final boolean MY_ALGORITHM = false;
     private static final boolean APACHE_ALGORITHM = true;
 
@@ -39,15 +40,22 @@ public class ExchangeRatesDisplay implements CommandLineRunner {
 
         log.info("Application is running...");
 
-        if(args.length < ARG_MINIMUM_ARGUMENTS_NUMBER) {
-            System.out.println("No enought arguments");
+        if(args.length == 1 && args[ARG_CURRENCY_CODE_OR_HELP].equals(HELP)) {
+
+            showHelpInformation();
+            return;
+        }
+        if (args.length < ARG_MINIMUM_ARGUMENTS_NUMBER) {
+
+            showErrorInformation();
+            return;
         }
 
-        NBPResponse chargeData = nbpApiReader.getData(args[ARG_CURRENCY_CODE], args[ARG_DATE_FROM], args[ARG_DATE_TO]);
-        if(chargeData != null) {
+        NBPResponse chargeData = nbpApiReader.getData(args[ARG_CURRENCY_CODE_OR_HELP], args[ARG_DATE_FROM], args[ARG_DATE_TO]);
+        if (chargeData != null) {
 
-            if(args.length > ARG_MINIMUM_ARGUMENTS_NUMBER && args[ARG_CALCULATION_VARIANT].equals(MY_CALCULATION_VARIANT)) {
-                algorithmVersion = MY_ALGORITHM;
+            if (args.length > ARG_MINIMUM_ARGUMENTS_NUMBER && args[ARG_CALCULATION_VARIANT].equals(MY_CALCULATION_VARIANT)) {
+                    algorithmVersion = MY_ALGORITHM;
             }
 
             bids = chargeData.extractBids();
@@ -59,6 +67,7 @@ public class ExchangeRatesDisplay implements CommandLineRunner {
             showResult(arithmeticMean, standardDeviation);
         }
     }
+
 
     private double calculateMean(double[] bids , boolean algorithmVersion) {
 
@@ -97,5 +106,18 @@ public class ExchangeRatesDisplay implements CommandLineRunner {
         }
         System.out.println(arithmeticMean + " : Purchase average");
         System.out.println(standardDeviation + " : Standard deviation");
+    }
+
+    private void showHelpInformation() {
+
+        System.out.println("Required parameters: [code] [date from] [date to]");
+        System.out.println("Example call: java -jar exchangerates-1.0-SNAPSHOT.jar USD 2018-10-01 2018-10-04");
+        System.out.println("Optional parameter: -m. The calculation will be based on own algorithm");
+    }
+
+    private void showErrorInformation() {
+
+        System.out.println("No enought arguments");
+        System.out.println("For help start the program with -h parameter");
     }
 }

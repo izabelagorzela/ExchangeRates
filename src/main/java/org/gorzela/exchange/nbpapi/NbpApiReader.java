@@ -24,8 +24,9 @@ public class NbpApiReader {
             entity = restTemplate.getForEntity(uri, NBPResponse.class);
 
         } catch (Exception ex) {
-            System.out.println("Something wrong happened...");
+
             System.out.println(ex.getMessage());
+            showErrorInformation();
             return null;
         }
 
@@ -34,5 +35,12 @@ public class NbpApiReader {
         }
 
         return entity.getBody();
+    }
+
+    private void showErrorInformation() {
+
+        System.out.println("");
+        System.out.println("NBP server returned an error code");
+        System.out.println("For help start the program with -h parameter");
     }
 }
