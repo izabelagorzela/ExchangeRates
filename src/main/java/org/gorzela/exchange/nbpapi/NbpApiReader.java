@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
@@ -23,9 +25,14 @@ public class NbpApiReader {
         try {
             entity = restTemplate.getForEntity(uri, NBPResponse.class);
 
-        } catch (Exception ex) {
+        } catch (RestClientException ex) {
 
             System.out.println(ex.getMessage());
+            if(ex instanceof HttpClientErrorException) {
+                if(((HttpClientErrorException) ex).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+                    System.out.println("Today's data may not be available");
+                }
+            }
             showErrorInformation();
             return null;
         }
