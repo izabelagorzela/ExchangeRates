@@ -3,10 +3,13 @@ package org.gorzela.exchange.nbpapi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 import java.net.URI;
 
 
@@ -21,33 +24,44 @@ public class NbpApiReader {
         URI uri = uriFactory.getUri(pathPart1, pathPart2, pathPart3);
         ResponseEntity<NBPResponse> entity;
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(new NBPErrorHandler());
 
         try {
             entity = restTemplate.getForEntity(uri, NBPResponse.class);
 
         } catch (RestClientException ex) {
 
-            System.out.println(ex.getMessage());
-            if(ex instanceof HttpClientErrorException) {
-                if(((HttpClientErrorException) ex).getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                    System.out.println("Today's data may not be available");
-                }
-            }
-            showErrorInformation();
             return null;
         }
 
         if (entity.getStatusCode() != HttpStatus.OK) {
+
             return null;
         }
 
         return entity.getBody();
     }
 
-    private void showErrorInformation() {
+    private class NBPErrorHandler implements ResponseErrorHandler {
 
-        System.out.println("");
-        System.out.println("NBP server returned an error code");
-        System.out.println("For help start the program with -h parameter");
+        @Override
+        public boolean hasError(ClientHttpResponse clientHttpResponse) throws IOException {
+
+            if (clientHttpResponse.getStatusCode() != HttpStatus.OK) {
+
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
+
+            System.out.println(clientHttpResponse.getStatusText());
+            System.out.println("For help start the program with -h parameter");
+            if(clientHttpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
+                System.out.println("Today's data may not be available");
+            }
+        }
     }
 }
