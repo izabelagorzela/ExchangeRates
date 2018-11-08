@@ -117,7 +117,7 @@ public class ExchangeRatesDisplay implements CommandLineRunner {
 
     private void showErrorInformation() {
 
-        System.out.println("No enought arguments");
+        System.out.println("Not enough arguments");
         System.out.println("For help start the program with -h parameter");
     }
 }
